@@ -1,3 +1,6 @@
+var Main = require('./lib/Caster/Main.purs')
+Main.main()
+
 const canvas = document.getElementById('canvas')
 const canvasWidth = canvas.width
 const canvasHeight = canvas.height
@@ -67,6 +70,7 @@ function draw() {
 
   // Update player every MOVE_SPEED frames
   if (keys[UP_KEY]) {
+    if (worldMap[pos.x][pos.y])
     pos.x += dir.x
     pos.y += dir.y
   } else if (keys[DOWN_KEY]) {
