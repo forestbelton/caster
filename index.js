@@ -49,8 +49,6 @@ let worldMap =
   , [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ]
 
-const rotSpeed = (2 * Math.PI) / 4
-
 let frame = 0
 
 let pos = { x: 12, y: 12 }
@@ -79,21 +77,21 @@ function draw() {
   if (keys[RIGHT_KEY]) {
     // Both camera direction and camera plane must be rotated
     const oldDirX = dir.x
-    dir.x = dir.x * Math.cos(-rotSpeed) - dir.y * Math.sin(-rotSpeed)
-    dir.y = oldDirX * Math.sin(-rotSpeed) + dir.y * Math.cos(-rotSpeed)
+    dir.x = dir.y
+    dir.y = -oldDirX
 
     const oldPlaneX = plane.x
-    plane.x = plane.x * Math.cos(-rotSpeed) - plane.y * Math.sin(-rotSpeed)
-    plane.y = oldPlaneX * Math.sin(-rotSpeed) + plane.y * Math.cos(-rotSpeed)
+    plane.x = plane.y
+    plane.y = -oldPlaneX
   } else if (keys[LEFT_KEY]) {
     // Both camera direction and camera plane must be rotated
     const oldDirX = dir.x
-    dir.x = dir.x * Math.cos(rotSpeed) - dir.y * Math.sin(rotSpeed)
-    dir.y = oldDirX * Math.sin(rotSpeed) + dir.y * Math.cos(rotSpeed)
+    dir.x = -dir.y
+    dir.y = oldDirX
 
     const oldPlaneX = plane.x
-    plane.x = plane.x * Math.cos(rotSpeed) - plane.y * Math.sin(rotSpeed)
-    plane.y = oldPlaneX * Math.sin(rotSpeed) + plane.y * Math.cos(rotSpeed)
+    plane.x = -plane.y
+    plane.y = oldPlaneX
   }
 
   keys = {}
