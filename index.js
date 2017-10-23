@@ -70,7 +70,6 @@ function draw() {
 
   // Update player every MOVE_SPEED frames
   if (keys[UP_KEY]) {
-    if (worldMap[pos.x][pos.y])
     pos.x += dir.x
     pos.y += dir.y
   } else if (keys[DOWN_KEY]) {
