@@ -1,8 +1,15 @@
 module Caster.Types where
 
 import Data.Array
+import Data.Foldable (any)
 import Data.Tuple
 import Data.Map
+import Prelude ((<), (>=), id)
+
+type Coord =
+    { x :: Int
+    , y :: Int
+    }
 
 type Level =
     { tileMap :: Map Int Int
@@ -10,6 +17,14 @@ type Level =
     , width   :: Int
     , height  :: Int
     }
+
+outOfBounds :: Coord -> Level -> Boolean
+outOfBounds coord level = any id
+    [ coord.x < 0
+    , coord.x >= level.width
+    , coord.y < 0
+    , coord.y >= level.height
+    ]
 
 data Tile
 
@@ -26,7 +41,7 @@ rotateRight East  = South
 rotateRight West  = North
 
 type Player =
-    { position  :: { x :: Int, y :: Int }
+    { position  :: Coord
     , direction :: Direction
     }
 

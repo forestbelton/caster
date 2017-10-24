@@ -11,8 +11,8 @@ import Data.Maybe (Maybe(..))
 import Graphics.Canvas (CANVAS, getCanvasElementById, getContext2D, Context2D)
 import Prelude (pure, bind, ($), (<$>), unit, Unit, map, (<<<))
 
-import Caster.UI.RayCaster (ScreenData, Line(..), castRays)
-import Caster.UI.RayCaster (ScreenData(..)) as ScreenData
+import Caster.UI.RayCaster (ScreenData, Line, castRays)
+import Caster.UI.RayCaster (ScreenData) as ScreenData
 
 newtype Screen = Screen Context2D
 
