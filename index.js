@@ -1,7 +1,7 @@
 var Main = require('./lib/Caster/Main.purs')
 Main.main()
 
-const canvas = document.getElementById('canvas')
+/*const canvas = document.getElementById('canvas')
 const canvasWidth = canvas.width
 const canvasHeight = canvas.height
 
@@ -218,4 +218,4 @@ function draw() {
   window.requestAnimationFrame(draw)
 }
 
-window.requestAnimationFrame(draw)
+window.requestAnimationFrame(draw)*/
