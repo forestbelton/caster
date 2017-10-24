@@ -4,7 +4,8 @@ module Caster.UI.RayCaster
     , castRays
     ) where
 
-import Data.Int (toNumber)
+import Data.Array ((..))
+import Data.Int (toNumber, floor)
 import Partial.Unsafe (unsafeCrashWith)
 import Prelude
 
@@ -19,9 +20,9 @@ type ScreenData =
     }
 
 type Line =
-    { x     :: Int
-    , start :: Int
-    , end   :: Int
+    { x     :: Number
+    , start :: Number
+    , end   :: Number
     , color :: Color
     }
 
@@ -56,4 +57,8 @@ ray screen x =
           player  = screen.player.position
 
 castRays :: ScreenData -> Array Line
-castRays screen = unsafeCrashWith "not implemented"
+castRays screen = map (castRay screen) xs
+    where xs = 0..(floor screen.viewport.width - 1)
+
+castRay :: ScreenData -> Int -> Line
+castRay screen = unsafeCrashWith "not implemented"

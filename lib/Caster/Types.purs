@@ -26,6 +26,7 @@ outOfBounds coord level = any id
     , coord.y >= level.height
     ]
 
+-- TODO
 data Tile
 
 data Direction

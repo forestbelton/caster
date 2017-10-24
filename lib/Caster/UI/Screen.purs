@@ -8,9 +8,10 @@ module Caster.UI.Screen
 import Control.Monad.Eff (Eff)
 import Data.Foldable (sequence_)
 import Data.Maybe (Maybe(..))
-import Graphics.Canvas (CANVAS, getCanvasElementById, getContext2D, Context2D)
-import Prelude (pure, bind, ($), (<$>), unit, Unit, map, (<<<))
+import Graphics.Canvas
+import Prelude (pure, bind, discard, ($), (<$>), unit, Unit, map, (<<<), (-))
 
+import Caster.UI.Color (toRGB)
 import Caster.UI.RayCaster (ScreenData, Line, castRays)
 import Caster.UI.RayCaster (ScreenData) as ScreenData
 
@@ -24,8 +25,33 @@ getScreen id = do
         Just canvas -> (Just <<< Screen) <$> getContext2D canvas
 
 drawScreen :: forall eff. Screen -> ScreenData -> Eff (canvas :: CANVAS | eff) Unit
-drawScreen (Screen ctx) dat = sequence_ $ map (drawLine ctx) lines
-    where lines = castRays dat
+drawScreen (Screen ctx) dat = do
+    _ <- setFillStyle "black" ctx
+    _ <- fillRect ctx { x: 0.0, y: 0.0, w: dat.viewport.width, h: dat.viewport.height }
+    sequence_ $ map (drawLine dat.viewport.height ctx) lines
+    where lines = [] -- castRays dat
 
-drawLine :: forall eff. Context2D -> Line -> Eff (canvas :: CANVAS | eff) Unit
-drawLine ctx line = pure unit
+drawLine :: forall eff. Number -> Context2D -> Line -> Eff (canvas :: CANVAS | eff) Unit
+drawLine height ctx line = do
+    -- Draw ceiling
+    _ <- setStrokeStyle "gray" ctx
+    _ <- strokePath ctx $ do
+        _ <- moveTo ctx line.x 0.0
+        _ <- lineTo ctx line.x line.start
+        closePath ctx
+
+    -- Draw wall
+    _ <- setStrokeStyle (toRGB line.color) ctx
+    _ <- strokePath ctx $ do
+        _ <- moveTo ctx line.x line.start
+        _ <- lineTo ctx line.x line.end
+        closePath ctx
+
+    -- Draw ground
+    _ <- setStrokeStyle "brown" ctx
+    _ <- strokePath ctx $ do
+        _ <- moveTo ctx line.x line.end
+        _ <- lineTo ctx line.x (height - 1.0)
+        closePath ctx
+
+    pure unit
