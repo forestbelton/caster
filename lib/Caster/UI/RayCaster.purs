@@ -40,15 +40,15 @@ playerPlane :: Player -> L.V2
 playerPlane p = case p.direction of
     North -> { x: 0.66,  y: 0.0   }
     South -> { x: -0.66, y: 0.0   }
-    East  -> { x: 0.0,   y: 0.66  }
-    West  -> { x: 0.0,   y: -0.66 }
+    East  -> { x: 0.0,   y: -0.66 }
+    West  -> { x: 0.0,   y:  0.66 }
 
 playerDir :: Player -> L.V2
 playerDir p = case p.direction of
-    North -> { x: 0.0,  y: -1.0 }
-    South -> { x: 0.0,  y: 1.0  }
-    East  -> { x: -1.0, y: 0.0  }
-    West  -> { x: 1.0,  y: 0.0  }
+    North -> { x: 0.0,  y: 1.0   }
+    South -> { x: 0.0,  y: -1.0  }
+    East  -> { x: 1.0,  y: 0.0   }
+    West  -> { x: -1.0,  y: 0.0  }
 
 -- | `ray` computes the ray from the player to screen column x
 ray :: ScreenData -> Number -> Ray
