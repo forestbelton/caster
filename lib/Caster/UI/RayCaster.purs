@@ -171,7 +171,7 @@ moveVertically state =
           sideDist = { x: state.sideDist.x, y: state.sideDist.y + state.deltaDist.y }
 
 foundWall :: SearchState -> Boolean
-foundWall state = maybe 0 id (lookup tileIndex state.level.tileMap) == 0
+foundWall state = maybe 0 id (lookup tileIndex state.level.tileMap) /= 0
     where tileIndex = state.position.y * state.level.width + state.position.x
 
 getDeltaDist :: Ray -> L.V2
