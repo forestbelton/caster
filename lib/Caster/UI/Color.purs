@@ -2,6 +2,8 @@ module Caster.UI.Color
     ( Color(..)
     , darken
     , toRGB
+    , magentaColor
+    , blackColor
     ) where
 
 import Data.Monoid ((<>))
@@ -21,3 +23,9 @@ darken c = { red: c.red `div` 2
 
 toRGB :: Color -> String
 toRGB c = "rgb(" <> show c.red <> "," <> show c.green <> "," <> show c.blue <> ")"
+
+blackColor :: Color
+blackColor = { red: 0, green: 0, blue: 0 }
+
+magentaColor :: Color
+magentaColor = { red: 255, green: 0, blue: 255 }

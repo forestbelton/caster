@@ -9,7 +9,7 @@ import Control.Monad.Eff (Eff)
 import Data.Foldable (sequence_)
 import Data.Maybe (Maybe(..))
 import Graphics.Canvas
-import Prelude (pure, bind, discard, ($), (<$>), unit, Unit, map, (<<<), (-))
+import Prelude (pure, bind, ($), (<$>), unit, Unit, map, (<<<), (-))
 
 import Caster.UI.Color (toRGB)
 import Caster.UI.RayCaster (ScreenData, Line, castRays)
@@ -29,7 +29,7 @@ drawScreen (Screen ctx) dat = do
     _ <- setFillStyle "black" ctx
     _ <- fillRect ctx { x: 0.0, y: 0.0, w: dat.viewport.width, h: dat.viewport.height }
     sequence_ $ map (drawLine dat.viewport.height ctx) lines
-    where lines = [] -- castRays dat
+    where lines = castRays dat
 
 drawLine :: forall eff. Number -> Context2D -> Line -> Eff (canvas :: CANVAS | eff) Unit
 drawLine height ctx line = do

@@ -1,6 +1,7 @@
 module Caster.Math.Linear
     ( V2(..)
     , M22(..)
+    , map
     , add
     , sub
     , scale
@@ -23,6 +24,9 @@ type M22 =
     , c :: Number
     , d :: Number
     }
+
+map :: forall a. (Number -> a) -> V2 -> { x :: a, y :: a }
+map f v = { x: f v.x, y: f v.y }
 
 zipWith :: (Number -> Number -> Number) -> V2 -> V2 -> V2
 zipWith f v w = { x: f v.x w.x, y: f v.y w.y }

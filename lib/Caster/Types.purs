@@ -1,10 +1,9 @@
 module Caster.Types where
 
-import Data.Array
 import Data.Foldable (any)
-import Data.Tuple
-import Data.Map
-import Prelude ((<), (>=), id)
+import Data.Map (Map, lookup)
+import Data.Maybe (Maybe)
+import Prelude ((<), (>=), (*), (+), id)
 
 type Coord =
     { x :: Int
@@ -18,8 +17,12 @@ type Level =
     , height  :: Int
     }
 
-outOfBounds :: Coord -> Level -> Boolean
-outOfBounds coord level = any id
+tileAt :: Level -> Coord -> Maybe Int
+tileAt level coord = lookup index level.tileMap
+    where index = coord.y * level.width + coord.x
+
+outOfBounds :: Level -> Coord -> Boolean
+outOfBounds level coord = any id
     [ coord.x < 0
     , coord.x >= level.width
     , coord.y < 0
