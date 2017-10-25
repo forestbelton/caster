@@ -130,11 +130,11 @@ findCollision state = if outOfBounds state.level state.position
         if foundWall state'
             then let s    = state'.side
                      pos  = state'.position
-                     dist    = case s of
+                     dist = case s of
                                 OnSide -> ((toNumber pos.y - state'.ray.position.y) + (1.0 - toNumber state'.step.y))
                                     / state'.ray.direction.y
-                                NotOnSide -> ((toNumber pos.y - state'.ray.position.y) + (1.0 - toNumber state'.step.y))
-                                    / state'.ray.direction.y
+                                NotOnSide -> ((toNumber pos.x - state'.ray.position.x) + (1.0 - toNumber state'.step.x))
+                                    / state'.ray.direction.x
             in Just { position: pos, side: s, wallDistance: dist }
             else findCollision state'
 
