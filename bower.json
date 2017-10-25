@@ -27,6 +27,7 @@
     "purescript-foldable-traversable": "3.6.1",
     "purescript-console": "3.0.0",
     "purescript-math": "2.1.0",
-    "purescript-refs": "3.0.0"
+    "purescript-refs": "3.0.0",
+    "purescript-functions": "3.0.0"
   }
 }

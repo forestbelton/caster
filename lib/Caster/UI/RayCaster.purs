@@ -93,7 +93,7 @@ getLine screen x coll =
           lineHeight = toNumber $ floor $ viewHeight / coll.wallDistance
           drawStart = max 0.0 $ (viewHeight - lineHeight) / 2.0
           drawEnd = min (viewHeight - 1.0) $ (lineHeight + viewHeight) / 2.0
-          color = getColor $ log $ (maybe 0 id $ tileAt screen.level $ log coll.position)
+          color = getColor $ (maybe 0 id $ tileAt screen.level $ coll.position)
           darkenedColor = case coll.side of
                               OnSide -> darken color
                               NotOnSide -> color

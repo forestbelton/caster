@@ -5,14 +5,15 @@ module Caster.Main
 import Graphics.Canvas (CANVAS)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, error)
-import Control.Monad.Eff.Ref (REF, Ref, newRef, readRef)
+import Control.Monad.Eff.Ref (REF, Ref, newRef, modifyRef, readRef)
 import Data.Array ((..), zip)
 import Data.Maybe (Maybe(..))
 import Data.Map as M
 import Data.Tuple
-import Prelude (($), bind, pure, (*), (+), Unit)
+import Prelude (($), discard, bind, pure, (*), (+), Unit, unit)
 
-import Caster.Types (Direction(..))
+import Caster.Keys
+import Caster.Types (Direction(..), rotateRight)
 import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
 
 foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
@@ -72,14 +73,38 @@ initialData =
 
 -------------------------------------------------------
 
-main :: forall eff. Eff (canvas :: CANVAS, console :: CONSOLE, ref :: REF | eff) Unit
+type App eff a = Eff (keys :: KEYS, canvas :: CANVAS, console :: CONSOLE, ref :: REF | eff) a
+
+main :: forall eff. App eff Unit
 main = do screenData <- newRef initialData
           maybeScreen <- getScreen "canvas"
           case maybeScreen of
               Nothing     -> error "could not find screen at #canvas"
               Just screen -> requestAnimationFrame $ loop screen screenData
 
-loop :: forall eff. Screen -> Ref ScreenData -> Eff (canvas :: CANVAS, ref :: REF | eff) Unit
+loop :: forall eff. Screen -> Ref ScreenData -> App eff Unit
 loop screen dataRef = do
+    updateInput dataRef
     screenData <- readRef dataRef
     drawScreen screen screenData
+
+data Key
+    = Left
+    | Up
+    | Right
+    | Down
+    | SomeKey Int
+
+toKeyCode :: Key -> Int
+toKeyCode Left  = 37
+toKeyCode Up    = 38
+toKeyCode Right = 39
+toKeyCode Down  = 40
+toKeyCode (SomeKey x) = x
+
+updateInput :: forall eff. Ref ScreenData -> App eff Unit
+updateInput dataRef = do
+    rightKey <- checkKey $ toKeyCode Right
+    if rightKey
+        then modifyRef dataRef $ \d -> d { player { direction = rotateRight d.player.direction } }
+        else pure unit
