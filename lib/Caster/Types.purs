@@ -38,6 +38,12 @@ data Direction
     | East
     | West
 
+rotateLeft :: Direction -> Direction
+rotateLeft North = West
+rotateLeft South = East
+rotateLeft East  = South
+rotateLeft West  = North
+
 rotateRight :: Direction -> Direction
 rotateRight North = East
 rotateRight South = West

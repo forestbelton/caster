@@ -9,11 +9,11 @@ import Control.Monad.Eff.Ref (REF, Ref, newRef, modifyRef, readRef)
 import Data.Array ((..), zip)
 import Data.Maybe (Maybe(..))
 import Data.Map as M
-import Data.Tuple
+import Data.Tuple (Tuple(..))
 import Prelude (($), discard, bind, pure, (*), (+), Unit, unit)
 
-import Caster.Keys
-import Caster.Types (Direction(..), rotateRight)
+import Caster.Keys (KEYS, checkKey, initKeys)
+import Caster.Types (Direction(..), rotateRight, rotateLeft)
 import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
 
 foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
@@ -105,7 +105,10 @@ toKeyCode (SomeKey x) = x
 
 updateInput :: forall eff. Ref ScreenData -> App eff Unit
 updateInput dataRef = do
+    leftKey <- checkKey $ toKeyCode Left
     rightKey <- checkKey $ toKeyCode Right
     if rightKey
         then modifyRef dataRef $ \d -> d { player { direction = rotateRight d.player.direction } }
-        else pure unit
+        else if leftKey
+            then modifyRef dataRef $ \d -> d { player { direction = rotateLeft d.player.direction } }
+            else pure unit
