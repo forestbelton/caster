@@ -5,6 +5,7 @@ module Caster.Main
 import Graphics.Canvas (CANVAS)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, error)
+import Control.Monad.Eff.Ref (REF, Ref, newRef, readRef)
 import Data.Array ((..), zip)
 import Data.Maybe (Maybe(..))
 import Data.Map as M
@@ -12,9 +13,13 @@ import Data.Tuple
 import Prelude (($), bind, pure, (*), (+), Unit)
 
 import Caster.Types (Direction(..))
-import Caster.UI.Screen (ScreenData, getScreen, drawScreen)
+import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
 
 foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
+
+-------------------------------------------------------
+--                     SEED DATA
+-------------------------------------------------------
 
 worldMap :: Array (Array Int)
 worldMap =
@@ -65,8 +70,16 @@ initialData =
     , viewport: { width: 500.0, height: 400.0 }
     }
 
-main :: forall eff. Eff (canvas :: CANVAS, console :: CONSOLE | eff) Unit
-main = do maybeScreen <- getScreen "canvas"
+-------------------------------------------------------
+
+main :: forall eff. Eff (canvas :: CANVAS, console :: CONSOLE, ref :: REF | eff) Unit
+main = do screenData <- newRef initialData
+          maybeScreen <- getScreen "canvas"
           case maybeScreen of
               Nothing     -> error "could not find screen at #canvas"
-              Just screen -> requestAnimationFrame $ drawScreen screen initialData
+              Just screen -> requestAnimationFrame $ loop screen screenData
+
+loop :: forall eff. Screen -> Ref ScreenData -> Eff (canvas :: CANVAS, ref :: REF | eff) Unit
+loop screen dataRef = do
+    screenData <- readRef dataRef
+    drawScreen screen screenData
