@@ -93,13 +93,16 @@ getLine screen x coll =
           lineHeight = toNumber $ floor $ viewHeight / coll.wallDistance
           drawStart = max 0.0 $ (viewHeight - lineHeight) / 2.0
           drawEnd = min (viewHeight - 1.0) $ (lineHeight + viewHeight) / 2.0
-          color = getColor (maybe 0 id $ tileAt screen.level coll.position)
+          color = getColor $ log $ (maybe 0 id $ tileAt screen.level $ log coll.position)
           darkenedColor = case coll.side of
                               OnSide -> darken color
                               NotOnSide -> color
 
 getColor :: Int -> Color
 getColor 1 = { red: 255, green: 0, blue: 0 }
+getColor 2 = { red: 0, green: 0, blue: 255 }
+getColor 3 = { red: 0, green: 255, blue: 0 }
+getColor 4 = { red: 255, green: 255, blue: 255 }
 getColor _ = blackColor
 
 type SearchState =
