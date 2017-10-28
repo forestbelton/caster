@@ -66,7 +66,7 @@ initialData =
 type App eff a = Eff (keys :: KEYS, canvas :: CANVAS, console :: CONSOLE, ref :: REF | eff) a
 
 main :: forall eff. App eff Unit
-main = do _ <- initKeys "canvas"
+main = do _ <- initKeys
           screenData <- newRef initialData
           maybeScreen <- getScreen "canvas"
           case maybeScreen of
