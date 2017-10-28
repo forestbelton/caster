@@ -2,7 +2,7 @@ module Caster.Main
     ( main
     ) where
 
-import Caster.Keys (KEYS, checkKey, initKeys)
+import Caster.Keys (KEYS, checkKey, initKeys, Key(..), toKeyCode)
 import Caster.Types (Direction(..), moveDirection, rotateLeft, rotateRight)
 import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
 import Control.Monad.Eff (Eff)
@@ -78,20 +78,6 @@ loop screen dataRef = do
     updateInput dataRef
     screenData <- readRef dataRef
     drawScreen screen screenData
-
-data Key
-    = Left
-    | Up
-    | Right
-    | Down
-    | SomeKey Int
-
-toKeyCode :: Key -> Int
-toKeyCode Left  = 37
-toKeyCode Up    = 38
-toKeyCode Right = 39
-toKeyCode Down  = 40
-toKeyCode (SomeKey x) = x
 
 flipDirection :: Direction -> Direction
 flipDirection North = South
