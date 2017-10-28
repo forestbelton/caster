@@ -10,7 +10,7 @@ import Control.Monad.Eff.Console (CONSOLE, error)
 import Control.Monad.Eff.Ref (REF, Ref, newRef, modifyRef, readRef)
 import Data.Maybe (Maybe(..))
 import Graphics.Canvas (CANVAS)
-import Prelude (($), discard, bind, pure, Unit, unit, not)
+import Prelude (($), discard, bind, pure, Unit, unit)
 
 foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
 

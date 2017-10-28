@@ -34,7 +34,7 @@ drawScreen (Screen ctx) dat = do
 drawLine :: forall eff. Number -> Context2D -> Line -> Eff (canvas :: CANVAS | eff) Unit
 drawLine height ctx line = do
     -- Draw ceiling
-    _ <- setStrokeStyle "gray" ctx
+    _ <- setStrokeStyle "#746C73" ctx
     _ <- strokePath ctx $ do
         _ <- moveTo ctx line.x 0.0
         _ <- lineTo ctx line.x line.start
@@ -48,7 +48,7 @@ drawLine height ctx line = do
         closePath ctx
 
     -- Draw ground
-    _ <- setStrokeStyle "brown" ctx
+    _ <- setStrokeStyle "#A98F6E" ctx
     _ <- strokePath ctx $ do
         _ <- moveTo ctx line.x line.end
         _ <- lineTo ctx line.x (height - 1.0)
