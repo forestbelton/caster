@@ -38,7 +38,7 @@ sub :: V2 -> V2 -> V2
 sub = zipWith P.sub
 
 scale :: V2 -> Number -> V2
-scale v k = { x: P.mul v.x k, y: P.mul v.x k }
+scale v k = { x: P.mul v.x k, y: P.mul v.y k }
 
 mult :: V2 -> M22 -> V2
 mult v m = { x: x', y: y' }

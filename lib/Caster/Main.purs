@@ -2,19 +2,15 @@ module Caster.Main
     ( main
     ) where
 
-import Graphics.Canvas (CANVAS)
+import Caster.Keys (KEYS, checkKey, initKeys)
+import Caster.Types (Direction(..), moveDirection, rotateLeft, rotateRight)
+import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, error)
 import Control.Monad.Eff.Ref (REF, Ref, newRef, modifyRef, readRef)
-import Data.Array ((..), zip)
 import Data.Maybe (Maybe(..))
-import Data.Map as M
-import Data.Tuple (Tuple(..))
-import Prelude (($), discard, bind, pure, (*), (+), Unit, unit)
-
-import Caster.Keys (KEYS, checkKey, initKeys)
-import Caster.Types (Direction(..), rotateRight, rotateLeft)
-import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
+import Graphics.Canvas (CANVAS)
+import Prelude (($), discard, bind, pure, Unit, unit)
 
 foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
 
@@ -24,46 +20,40 @@ foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
 
 worldMap :: Array (Array Int)
 worldMap =
-    [ [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,4,4,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,0,4,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,0,4,4,0,4,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,4,0,4,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,4,0,4,1]
-    , [1,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,4,0,5,0,4,0,4,1]
-    , [1,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,4,0,0,0,4,0,4,1]
-    , [1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,4,4,4,4,4,0,4,1]
-    , [1,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,3,0,3,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,3,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,3,0,3,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
-    , [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-    ]
-
-mapTiles :: Array (Tuple Int Int)
-mapTiles = do
-    Tuple y row <- zip (0..23) worldMap
-    Tuple x cell <- zip (0..23) row
-    pure $ Tuple (y * 24 + x) cell
+  [ [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1]
+  , [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1]
+  , [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+  , [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  ]
 
 initialData :: ScreenData
 initialData =
     { player:
         { position: { x: 12, y: 12 }
-        , direction: West
+        , direction: North
         }
     , level:
-        { tileMap: M.fromFoldable mapTiles
+        { tileMap: worldMap
         , tileSet: []
         , width: 24
         , height: 24
@@ -103,12 +93,37 @@ toKeyCode Right = 39
 toKeyCode Down  = 40
 toKeyCode (SomeKey x) = x
 
+flipDirection :: Direction -> Direction
+flipDirection North = South
+flipDirection South = North
+flipDirection East  = West
+flipDirection West  = East
+
 updateInput :: forall eff. Ref ScreenData -> App eff Unit
 updateInput dataRef = do
+    screenData <- readRef dataRef
+    let player = screenData.player
+
+    downKey <- checkKey $ toKeyCode Down
+    if downKey
+        then let position' = moveDirection player.direction player.position in
+             modifyRef dataRef $ \d -> d { player { position = position' }}
+        else pure unit
+
+    upKey <- checkKey $ toKeyCode Up
+    if upKey
+        then let position' = moveDirection (flipDirection player.direction) player.position in
+             modifyRef dataRef $ \d -> d { player { position = position' }}
+        else pure unit
+
     leftKey <- checkKey $ toKeyCode Left
+    if leftKey
+        then let direction' = rotateLeft player.direction in
+             modifyRef dataRef $ \d -> d { player { direction = direction' }}
+        else pure unit
+
     rightKey <- checkKey $ toKeyCode Right
     if rightKey
-        then modifyRef dataRef $ \d -> d { player { direction = rotateRight d.player.direction } }
-        else if leftKey
-            then modifyRef dataRef $ \d -> d { player { direction = rotateLeft d.player.direction } }
-            else pure unit
+        then let direction' = rotateRight player.direction in
+             modifyRef dataRef $ \d -> d { player { direction = direction' }}
+        else pure unit

@@ -2,19 +2,18 @@ module Caster.UI.RayCaster
     ( ScreenData(..)
     , Line(..)
     , castRays
+    , playerDir
     ) where
 
 import Data.Array ((..))
 import Data.Int (toNumber, floor)
-import Data.Map (lookup)
 import Data.Maybe (Maybe(..), maybe)
 import Math (sqrt)
-import Partial.Unsafe (unsafeCrashWith)
-import Prelude
+import Prelude (id, map, max, min, negate, ($), (*), (+), (-), (/), (/=), (<), (<<<))
 
-import Caster.Types
+import Caster.Types (Coord, Direction(..), Level, Player, Viewport, outOfBounds, tileAt)
 import Caster.Math.Linear as L
-import Caster.UI.Color
+import Caster.UI.Color (Color, blackColor, darken)
 
 foreign import signum :: Number -> Number
 
@@ -131,9 +130,9 @@ findCollision state = if outOfBounds state.level state.position
             then let s    = state'.side
                      pos  = state'.position
                      dist = case s of
-                                OnSide -> ((toNumber pos.y - state'.ray.position.y) + (1.0 - toNumber state'.step.y))
+                                OnSide -> ((toNumber pos.y - state'.ray.position.y) + (1.0 - toNumber state'.step.y) / 2.0)
                                     / state'.ray.direction.y
-                                NotOnSide -> ((toNumber pos.x - state'.ray.position.x) + (1.0 - toNumber state'.step.x))
+                                NotOnSide -> ((toNumber pos.x - state'.ray.position.x) + (1.0 - toNumber state'.step.x) / 2.0)
                                     / state'.ray.direction.x
             in Just { position: pos, side: s, wallDistance: dist }
             else findCollision state'
@@ -171,8 +170,7 @@ moveVertically state =
           sideDist = { x: state.sideDist.x, y: state.sideDist.y + state.deltaDist.y }
 
 foundWall :: SearchState -> Boolean
-foundWall state = maybe 0 id (lookup tileIndex state.level.tileMap) /= 0
-    where tileIndex = state.position.y * state.level.width + state.position.x
+foundWall state = maybe 0 id (tileAt state.level state.position) /= 0
 
 getDeltaDist :: Ray -> L.V2
 getDeltaDist r = { x: deltaDistX, y: deltaDistY }
