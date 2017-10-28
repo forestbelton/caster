@@ -52,6 +52,12 @@ rotateRight South = West
 rotateRight East  = South
 rotateRight West  = North
 
+flipDirection :: Direction -> Direction
+flipDirection North = South
+flipDirection South = North
+flipDirection East  = West
+flipDirection West  = East
+
 moveDirection :: Direction -> Coord -> Coord
 moveDirection North c = { x: c.x, y: c.y - 1 }
 moveDirection South c = { x: c.x, y: c.y + 1 }
