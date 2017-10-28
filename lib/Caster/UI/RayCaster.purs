@@ -144,28 +144,12 @@ updateSearch state = if state.sideDist.x < state.sideDist.y
 
 -- TODO: Cleanup
 moveHorizontally :: SearchState -> SearchState
-moveHorizontally state =
-    { level: state.level
-    , ray: state.ray
-    , step: state.step
-    , deltaDist: state.deltaDist
-    , position: position
-    , side: NotOnSide
-    , sideDist: sideDist
-    }
+moveHorizontally state = state { position = position, sideDist = sideDist, side = NotOnSide }
     where position = { x: state.position.x + state.step.x, y: state.position.y }
           sideDist = { x: state.sideDist.x + state.deltaDist.x, y: state.sideDist.y }
 
 moveVertically :: SearchState -> SearchState
-moveVertically state =
-    { level: state.level
-    , ray: state.ray
-    , step: state.step
-    , deltaDist: state.deltaDist
-    , position: position
-    , side: OnSide
-    , sideDist: sideDist
-    }
+moveVertically state = state { position = position, sideDist = sideDist, side = OnSide }
     where position = { x: state.position.x, y: state.position.y + state.step.y }
           sideDist = { x: state.sideDist.x, y: state.sideDist.y + state.deltaDist.y }
 
