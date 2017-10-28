@@ -3,14 +3,14 @@ module Caster.Main
     ) where
 
 import Caster.Keys (KEYS, checkKey, initKeys, Key(..), toKeyCode)
-import Caster.Types (Direction(..), moveDirection, flipDirection, rotateLeft, rotateRight)
+import Caster.Types (tileAt, Direction(..), moveDirection, flipDirection, rotateLeft, rotateRight)
 import Caster.UI.Screen (Screen, ScreenData, getScreen, drawScreen)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, error)
 import Control.Monad.Eff.Ref (REF, Ref, newRef, modifyRef, readRef)
 import Data.Maybe (Maybe(..))
 import Graphics.Canvas (CANVAS)
-import Prelude (($), discard, bind, pure, Unit, unit)
+import Prelude (($), discard, bind, pure, Unit, unit, not)
 
 foreign import requestAnimationFrame :: forall eff a. Eff eff a -> Eff eff Unit
 
@@ -87,13 +87,17 @@ updateInput dataRef = do
     downKey <- checkKey $ toKeyCode Down
     if downKey
         then let position' = moveDirection player.direction player.position in
-             modifyRef dataRef $ \d -> d { player { position = position' }}
+             case tileAt screenData.level position' of
+                Just _  -> modifyRef dataRef $ \d -> d { player { position = position' }}
+                Nothing -> pure unit
         else pure unit
 
     upKey <- checkKey $ toKeyCode Up
     if upKey
         then let position' = moveDirection (flipDirection player.direction) player.position in
-             modifyRef dataRef $ \d -> d { player { position = position' }}
+             case tileAt screenData.level position' of
+                Just _  -> modifyRef dataRef $ \d -> d { player { position = position' }}
+                Nothing -> pure unit
         else pure unit
 
     leftKey <- checkKey $ toKeyCode Left
